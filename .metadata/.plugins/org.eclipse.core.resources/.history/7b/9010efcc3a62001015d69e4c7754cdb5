@@ -1,0 +1,25 @@
+# Identify this service
+spring.application.name=transaction-service
+
+# Set the port this service runs on
+server.port=8082
+jwt.secret=DIaXB951HW30e7Qu8tSRnFH3hOPWkxYY/EzaNfmlM4Pk9BKBx7EQNYVFb8A36+xid0PnM0lloqAx6MI474tI/w==
+
+# Eureka registration
+eureka.client.register-with-eureka=true
+eureka.client.fetch-registry=true
+eureka.client.service-url.defaultZone=http://localhost:8761/eureka
+
+# DB Configuration
+spring.datasource.url=jdbc:postgresql://localhost:5432/paysync
+spring.datasource.username=postgres
+spring.datasource.password=Anoushka@02
+
+# Hibernate & JPA settings
+spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.show-sql=true
+
+# Elasticsearch config
+spring.elasticsearch.uris=http://localhost:9200
+

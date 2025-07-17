@@ -1,0 +1,33 @@
+# Ignore all service-specific application.properties/yml
+**/application.properties
+**/application.yml
+**/application-*.properties
+**/application-*.yml
+!**/application-sample.yml  # allow sample config
+
+# Maven
+target/
+**/target/
+
+# Gradle
+build/
+**/build/
+
+# IntelliJ
+.idea/
+*.iml
+
+# VS Code
+.vscode/
+
+# Logs
+*.log
+logs/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Docker
+*.env
+.env

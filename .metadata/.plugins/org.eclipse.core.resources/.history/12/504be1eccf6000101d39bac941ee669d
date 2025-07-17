@@ -1,0 +1,29 @@
+package com.paysync.wallet.config;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+
+@Component
+public class JwtUtil {
+
+    @Value("${jwt.secret}")
+    private String jwtSecret;
+
+    public Long extractUserId(String authHeader) {
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            throw new IllegalArgumentException("Invalid Authorization header");
+        }
+
+        String token = authHeader.substring(7);
+        @SuppressWarnings("deprecation")
+		Claims claims = Jwts.parser()
+                .setSigningKey(jwtSecret)
+                .parseClaimsJws(token)
+                .getBody();
+
+        return Long.parseLong(claims.getSubject()); // Assuming userId is stored in subject
+    }
+}

@@ -1,0 +1,13 @@
+package com.paysync.transaction.repository;
+
+import java.util.List;
+
+import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
+
+import com.paysync.transaction.entity.TransactionDocument;
+
+public interface TransactionElasticRepository extends ElasticsearchRepository<TransactionDocument, String> {
+    List<TransactionDocument> findByFromUserIdOrToUserId(Long fromUserId, Long toUserId);
+
+	TransactionDocument save(TransactionDocument doc);
+}
