@@ -7,7 +7,6 @@ import org.springframework.data.elasticsearch.repository.config.EnableElasticsea
 
 @SpringBootApplication
 @EnableDiscoveryClient
-@EnableElasticsearchRepositories(basePackages = "com.paysync.transaction.repository")
 public class TransactionServiceApplication {
 
 	public static void main(String[] args) {

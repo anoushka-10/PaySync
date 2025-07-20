@@ -2,6 +2,7 @@
 <section name="Workbench">
 	<section name="MavenProjectImportWizardPage">
 		<list key="rootDirectory">
+			<item value="/home/anoushka/Desktop/BakeryBeyondEggs/Backend"/>
 			<item value="/home/anoushka/Desktop/insightsync"/>
 		</list>
 		<list key="projectNameTemplate">

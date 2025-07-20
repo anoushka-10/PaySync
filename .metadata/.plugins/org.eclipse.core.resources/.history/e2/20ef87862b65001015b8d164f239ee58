@@ -1,0 +1,5 @@
+package com.Anoushka.Bakery.DTO;
+
+public class CategoryUpdateDTO {
+
+}

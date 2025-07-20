@@ -1,0 +1,5 @@
+package com.paysync.transaction.config;
+
+public class ElasticsearchConfig {
+
+}
