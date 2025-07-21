@@ -7,22 +7,7 @@ import { componentTagger } from "lovable-tagger";
 export default defineConfig(({ mode }) => ({
   server: {
     host: "::",
-    port: 3000,
-    proxy: {
-      // Forward any requests to these paths to your API Gateway
-      '/auth': {
-        target: 'http://localhost:8080',
-        changeOrigin: true,
-      },
-      '/wallet': {
-        target: 'http://localhost:8080',
-        changeOrigin: true,
-      },
-      '/transactions': {
-        target: 'http://localhost:8080',
-        changeOrigin: true,
-      },
-    }
+    port: 8080,
   },
   plugins: [
     react(),
@@ -33,5 +18,5 @@ export default defineConfig(({ mode }) => ({
     alias: {
       "@": path.resolve(__dirname, "./src"),
     },
-  }
+  },
 }));

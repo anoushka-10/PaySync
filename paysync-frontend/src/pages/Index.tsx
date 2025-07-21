@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Sidebar } from "@/components/layout/Sidebar";
 import { AuthPage } from "./AuthPage";
+import { LandingPage } from "./LandingPage";
 import { Dashboard } from "./Dashboard";
 import { AddMoneyForm } from "@/components/wallet/AddMoneyForm";
 import { SendMoneyForm } from "@/components/wallet/SendMoneyForm";
@@ -11,6 +12,7 @@ import { Settings, TrendingUp } from "lucide-react";
 const Index = () => {
   const [token, setToken] = useState<string | null>(null);
   const [currentView, setCurrentView] = useState('dashboard');
+  const [showAuth, setShowAuth] = useState(false);
 
   useEffect(() => {
     // Check for stored token on component mount
@@ -40,8 +42,11 @@ const Index = () => {
     setCurrentView('dashboard');
   };
 
-  // If not authenticated, show auth page
+  // If not authenticated, show landing or auth page
   if (!token) {
+    if (!showAuth) {
+      return <LandingPage onGetStarted={() => setShowAuth(true)} />;
+    }
     return <AuthPage onLogin={handleLogin} />;
   }
 

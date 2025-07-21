@@ -30,35 +30,27 @@ export function LoginForm({ onLogin, onSwitchToRegister }: LoginFormProps) {
     }
 
     setIsLoading(true);
-    try {
-      const response = await fetch('/auth/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ username, password }),
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        onLogin(data.token);
+    
+    // Simulate API call with mock authentication
+    setTimeout(() => {
+      // For demo purposes, accept any non-empty credentials
+      if (username.trim() && password.trim()) {
+        const mockToken = `mock_token_${Date.now()}`;
+        onLogin(mockToken);
         toast({
           title: "Success",
           description: "Logged in successfully!",
           variant: "default",
         });
       } else {
-        throw new Error('Login failed');
+        toast({
+          title: "Error",
+          description: "Please fill in all fields",
+          variant: "destructive",
+        });
       }
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Invalid username or password",
-        variant: "destructive",
-      });
-    } finally {
       setIsLoading(false);
-    }
+    }, 1000); // Simulate network delay
   };
 
   return (
