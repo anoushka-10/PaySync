@@ -3,6 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Wallet, Plus, Send, TrendingUp } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { API_BASE_URL } from "@/lib/api";
 
 interface WalletBalanceProps {
   token: string;
@@ -21,7 +22,7 @@ export function WalletBalance({ token, onAddMoney, onSendMoney }: WalletBalanceP
 
   const fetchBalance = async () => {
     try {
-      const response = await fetch('/wallet/balance', {
+      const response = await fetch(`${API_BASE_URL}/wallet/balance`, {
         headers: {
           'Authorization': `Bearer ${token}`,
         },

@@ -10,6 +10,7 @@ import {
   MoreHorizontal
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { API_BASE_URL } from "@/lib/api";
 
 interface Transaction {
   id: string;
@@ -36,7 +37,7 @@ export function RecentTransactions({ token, onViewAll }: RecentTransactionsProps
 
   const fetchTransactions = async () => {
     try {
-      const response = await fetch('/transactions/my', {
+      const response = await fetch(`${API_BASE_URL}/transactions/my`, {
         headers: {
           'Authorization': `Bearer ${token}`,
         },
