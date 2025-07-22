@@ -1,0 +1,14 @@
+package com.paysync.wallet.config;
+
+import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+
+import com.paysync.wallet.Dtos.UserDTO;
+
+@FeignClient(name = "AUTH-SERVICE")
+public interface AuthServiceClient {
+
+ @GetMapping("/auth/user/{username}")
+ UserDTO getUserByUsername(@PathVariable("username") String username);
+}

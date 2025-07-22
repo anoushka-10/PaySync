@@ -1,0 +1,5 @@
+package com.paysync.wallet.config;
+
+public class AuthServiceClient {
+
+}

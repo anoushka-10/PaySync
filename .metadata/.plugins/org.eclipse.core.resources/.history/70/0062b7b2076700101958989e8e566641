@@ -1,0 +1,115 @@
+package com.paysync.wallet.Service;
+
+import java.math.BigDecimal;
+import java.time.Instant;
+import java.util.NoSuchElementException;
+import java.util.UUID;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.paysync.wallet.Dtos.AddMoneyRequest;
+import com.paysync.wallet.Dtos.SendMoneyRequest;
+import com.paysync.wallet.Dtos.WalletResponse;
+import com.paysync.wallet.Models.TransactionEvent;
+import com.paysync.wallet.Models.Wallet;
+import com.paysync.wallet.Repository.WalletRepository;
+import com.paysync.wallet.config.TransactionEventProducer;
+
+import lombok.RequiredArgsConstructor;
+
+@Service
+@RequiredArgsConstructor
+public class WalletService {
+
+    private final WalletRepository walletRepository;
+    private final IdempotencyService idempotencyService;
+    private final TransactionEventProducer eventProducer; // this is enough
+
+    public WalletResponse getWallet(Long userId) {
+        Wallet wallet = walletRepository.findByUserId(userId)
+                .orElseThrow(() -> new NoSuchElementException("Wallet not found"));
+        return new WalletResponse(wallet.getId(), wallet.getBalance(), wallet.getUserId());
+    }
+
+    @Transactional
+    public WalletResponse addMoney(Long userId, AddMoneyRequest request, String idempotencyKey) {
+        idempotencyService.checkwhatOrSaveKey(idempotencyKey, userId, "addMoney");
+
+        Wallet wallet = walletRepository.findByUserId(userId)
+                .orElseThrow(() -> new NoSuchElementException("Wallet not found"));
+        wallet.setBalance(wallet.getBalance().add(request.getAmount()));
+
+        eventProducer.sendTransactionEvent(TransactionEvent.builder()
+                .transactionId(UUID.randomUUID().toString())
+                .fromUserId(null)
+                .toUserId(userId)
+                .amount(request.getAmount())
+                .eventType("WALLET_MONEY_RECEIVED")
+                .timestamp(Instant.now().toString())
+                .build());
+
+        return new WalletResponse(wallet.getId(), wallet.getBalance(), wallet.getUserId());
+    }
+
+    @Transactional
+    public void sendMoney(Long fromUserId, SendMoneyRequest request, String idempotencyKey) {
+        idempotencyService.checkwhatOrSaveKey(idempotencyKey, fromUserId, "sendMoney");
+        
+        Wallet sender = walletRepository.findByUserId(fromUserId)
+                .orElseThrow(() -> new NoSuchElementException("Sender wallet not found"));
+
+        if (sender.getBalance().compareTo(request.getAmount()) < 0) {
+            throw new IllegalArgumentException("Insufficient balance");
+        }
+
+        Wallet receiver = walletRepository.findByUserId(request.getToUserId())
+                .orElseThrow(() -> new NoSuchElementException("Receiver wallet not found"));
+
+        sender.setBalance(sender.getBalance().subtract(request.getAmount()));
+        receiver.setBalance(receiver.getBalance().add(request.getAmount()));
+
+        walletRepository.save(sender);
+        walletRepository.save(receiver);
+
+        String transactionId = UUID.randomUUID().toString();
+        String now = Instant.now().toString();
+
+        eventProducer.sendTransactionEvent(TransactionEvent.builder()
+                .transactionId(transactionId)
+                .fromUserId(fromUserId)
+                .toUserId(request.getToUserId())
+                .amount(request.getAmount())
+                .eventType("WALLET_MONEY_SENT")
+                .timestamp(now)
+                .build());
+
+        eventProducer.sendTransactionEvent(TransactionEvent.builder()
+                .transactionId(transactionId)
+                .fromUserId(fromUserId)
+                .toUserId(request.getToUserId())
+                .amount(request.getAmount())
+                .eventType("WALLET_MONEY_RECEIVED")
+                .timestamp(now)
+                .build());
+    }
+
+    public WalletResponse createWallet(Long userId) {
+        if (walletRepository.existsByUserId(userId)) {
+            throw new RuntimeException("Wallet already exists for user");
+        }
+
+        Wallet wallet = new Wallet();
+        wallet.setUserId(userId);
+        wallet.setBalance(BigDecimal.ZERO); // safer than 0.0
+
+        Wallet savedWallet = walletRepository.save(wallet);
+        return from(savedWallet); // this method should be in WalletResponse class
+    }
+
+    public static WalletResponse from(Wallet wallet) {
+        return new WalletResponse(wallet.getId(), wallet.getBalance(), wallet.getUserId());
+    }
+
+
+}

@@ -5,15 +5,19 @@ import java.time.Instant;
 import java.util.NoSuchElementException;
 import java.util.UUID;
 
+import org.apache.hc.client5.http.auth.AuthStateCacheable;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.paysync.wallet.Dtos.AddMoneyRequest;
 import com.paysync.wallet.Dtos.SendMoneyRequest;
+import com.paysync.wallet.Dtos.UserDTO;
 import com.paysync.wallet.Dtos.WalletResponse;
 import com.paysync.wallet.Models.TransactionEvent;
 import com.paysync.wallet.Models.Wallet;
 import com.paysync.wallet.Repository.WalletRepository;
+import com.paysync.wallet.config.AuthServiceClient;
 import com.paysync.wallet.config.TransactionEventProducer;
 
 import lombok.RequiredArgsConstructor;
@@ -21,7 +25,9 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class WalletService {
-
+	
+	@Autowired
+	private AuthServiceClient authServiceClient;
     private final WalletRepository walletRepository;
     private final IdempotencyService idempotencyService;
     private final TransactionEventProducer eventProducer; // this is enough
@@ -51,11 +57,20 @@ public class WalletService {
 
         return new WalletResponse(wallet.getId(), wallet.getBalance(), wallet.getUserId());
     }
-
     @Transactional
     public void sendMoney(Long fromUserId, SendMoneyRequest request, String idempotencyKey) {
         idempotencyService.checkwhatOrSaveKey(idempotencyKey, fromUserId, "sendMoney");
-        
+
+        // 1. Call Auth-Service to get the receiver's user ID
+        UserDTO receiverUser = authServiceClient.getUserByUsername(request.getReceiverUsername());
+        Long toUserId = receiverUser.getId();
+
+        // Ensure the user is not sending money to themselves
+        if (fromUserId.equals(toUserId)) {
+            throw new IllegalArgumentException("Cannot send money to yourself.");
+        }
+
+        // 2. Proceed with the transaction using the resolved user ID
         Wallet sender = walletRepository.findByUserId(fromUserId)
                 .orElseThrow(() -> new NoSuchElementException("Sender wallet not found"));
 
@@ -63,8 +78,8 @@ public class WalletService {
             throw new IllegalArgumentException("Insufficient balance");
         }
 
-        Wallet receiver = walletRepository.findByUserId(request.getToUserId())
-                .orElseThrow(() -> new NoSuchElementException("Receiver wallet not found"));
+        Wallet receiver = walletRepository.findByUserId(toUserId)
+                .orElseThrow(() -> new NoSuchElementException("Receiver wallet not found for username: " + request.getReceiverUsername()));
 
         sender.setBalance(sender.getBalance().subtract(request.getAmount()));
         receiver.setBalance(receiver.getBalance().add(request.getAmount()));
@@ -72,13 +87,14 @@ public class WalletService {
         walletRepository.save(sender);
         walletRepository.save(receiver);
 
+        // 3. Publish events with the correct IDs
         String transactionId = UUID.randomUUID().toString();
         String now = Instant.now().toString();
 
         eventProducer.sendTransactionEvent(TransactionEvent.builder()
                 .transactionId(transactionId)
                 .fromUserId(fromUserId)
-                .toUserId(request.getToUserId())
+                .toUserId(toUserId) // Use the resolved ID
                 .amount(request.getAmount())
                 .eventType("WALLET_MONEY_SENT")
                 .timestamp(now)
@@ -87,7 +103,7 @@ public class WalletService {
         eventProducer.sendTransactionEvent(TransactionEvent.builder()
                 .transactionId(transactionId)
                 .fromUserId(fromUserId)
-                .toUserId(request.getToUserId())
+                .toUserId(toUserId) // Use the resolved ID
                 .amount(request.getAmount())
                 .eventType("WALLET_MONEY_RECEIVED")
                 .timestamp(now)

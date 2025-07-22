@@ -1,0 +1,5 @@
+package com.insight.auth_service.DTOs;
+
+public class UsernameRequest {
+
+}

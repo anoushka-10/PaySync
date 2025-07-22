@@ -5,6 +5,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Loader2, Send, DollarSign, User } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { API_BASE_URL } from "@/lib/api";
 
 interface SendMoneyFormProps {
   token: string;
@@ -57,16 +58,16 @@ export function SendMoneyForm({ token, onSuccess, onCancel }: SendMoneyFormProps
 
     setIsLoading(true);
     try {
-      const response = await fetch('/wallet/send', {
+      const response = await fetch(`${API_BASE_URL}/wallet/send`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`,
+          'Idempotency-Key': generateIdempotencyKey(), // The key is now in the header
         },
         body: JSON.stringify({
           receiverUsername: receiverUsername.trim(),
           amount: amountNum,
-          idempotencyKey: generateIdempotencyKey(),
         }),
       });
 

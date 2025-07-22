@@ -1,0 +1,5 @@
+package com.paysync.wallet.Dtos;
+
+public class UserDTO {
+
+}

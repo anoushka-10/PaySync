@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import com.insight.auth_service.DTOs.AuthResponse;
 import com.insight.auth_service.DTOs.LoginRequest;
 import com.insight.auth_service.DTOs.RegisterRequest;
+import com.insight.auth_service.DTOs.UserDTO;
 import com.insight.auth_service.Models.RefreshToken;
 import com.insight.auth_service.Models.Role;
 import com.insight.auth_service.Models.User;
@@ -88,6 +89,12 @@ public class AuthService {
                     return new AuthResponse(newAccessToken, token);
                 })
                 .orElseThrow(() -> new RuntimeException("Invalid refresh token"));
+    }
+
+    public UserDTO findUserByUsername(String username) {
+        User user = userRepo.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found with username: " + username));
+        return new UserDTO(user.getId(), user.getUsername(), user.getEmail());
     }
 }
 
