@@ -1,3 +1,5 @@
+// src/components/wallet/AddMoneyForm.tsx
+
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -5,6 +7,8 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Loader2, CreditCard, DollarSign } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+// Import the apiClient to standardize API calls
+import { API_BASE_URL, apiClient } from "@/lib/api";
 
 interface AddMoneyFormProps {
   token: string;
@@ -26,40 +30,36 @@ export function AddMoneyForm({ token, onSuccess, onCancel }: AddMoneyFormProps) 
     
     const amountNum = parseFloat(amount);
     
+    // --- This validation logic is correct, no changes needed ---
     if (!amount.trim() || isNaN(amountNum) || amountNum <= 0) {
-      toast({
-        title: "Error",
-        description: "Please enter a valid amount",
-        variant: "destructive",
-      });
+      toast({ title: "Error", description: "Please enter a valid amount", variant: "destructive" });
       return;
     }
-
     if (amountNum > 10000) {
-      toast({
-        title: "Error",
-        description: "Maximum amount per transaction is $10,000",
-        variant: "destructive",
-      });
+      toast({ title: "Error", description: "Maximum amount per transaction is $10,000", variant: "destructive" });
       return;
     }
+    // --- End of validation ---
 
     setIsLoading(true);
     try {
-      const response = await fetch('/wallet/add', {
+      const idempotencyKey = generateIdempotencyKey();
+      
+      // We need to extend the apiClient to support custom headers
+      const response = await fetch(`${API_BASE_URL}/wallet/add`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`,
+          'Idempotency-Key': idempotencyKey, // The key is now in the header
         },
+        // The body now only contains the amount
         body: JSON.stringify({
-          amount: amountNum,
-          idempotencyKey: generateIdempotencyKey(),
+          amount: amountNum, 
         }),
       });
 
       if (response.ok) {
-        const data = await response.json();
         toast({
           title: "Success",
           description: `$${amountNum.toFixed(2)} added to your wallet successfully!`,
@@ -67,12 +67,13 @@ export function AddMoneyForm({ token, onSuccess, onCancel }: AddMoneyFormProps) 
         });
         onSuccess();
       } else {
-        throw new Error('Failed to add money');
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to add money');
       }
     } catch (error) {
       toast({
         title: "Error",
-        description: "Failed to add money. Please try again.",
+        description: error instanceof Error ? error.message : "Failed to add money. Please try again.",
         variant: "destructive",
       });
     } finally {
@@ -81,7 +82,6 @@ export function AddMoneyForm({ token, onSuccess, onCancel }: AddMoneyFormProps) 
   };
 
   const quickAmounts = [50, 100, 250, 500, 1000];
-
   return (
     <Card className="fintech-card max-w-md mx-auto fade-in">
       <CardHeader className="text-center">

@@ -1,3 +1,5 @@
+// src/components/auth/LoginForm.tsx
+
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -5,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Loader2, Eye, EyeOff } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { apiClient } from "@/lib/api";
 
 interface LoginFormProps {
   onLogin: (token: string) => void;
@@ -30,27 +33,35 @@ export function LoginForm({ onLogin, onSwitchToRegister }: LoginFormProps) {
     }
 
     setIsLoading(true);
-    
-    // Simulate API call with mock authentication
-    setTimeout(() => {
-      // For demo purposes, accept any non-empty credentials
-      if (username.trim() && password.trim()) {
-        const mockToken = `mock_token_${Date.now()}`;
-        onLogin(mockToken);
+    try {
+      // Correctly call the /auth/login endpoint
+      const response = await apiClient.post('/auth/login', { username, password });
+
+      if (response.ok) {
+        const authResponse = await response.json(); // Assuming the body is AuthResponse
+        onLogin(authResponse.accessToken); // Assuming AuthResponse has an accessToken field
         toast({
           title: "Success",
           description: "Logged in successfully!",
           variant: "default",
         });
       } else {
+        const errorBody = await response.json();
         toast({
-          title: "Error",
-          description: "Please fill in all fields",
-          variant: "destructive",
+            title: "Error",
+            description: errorBody.message || "Invalid username or password",
+            variant: "destructive",
         });
       }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to connect to the server. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
       setIsLoading(false);
-    }, 1000); // Simulate network delay
+    }
   };
 
   return (
@@ -92,11 +103,7 @@ export function LoginForm({ onLogin, onSwitchToRegister }: LoginFormProps) {
                 className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
                 onClick={() => setShowPassword(!showPassword)}
               >
-                {showPassword ? (
-                  <EyeOff className="h-4 w-4" />
-                ) : (
-                  <Eye className="h-4 w-4" />
-                )}
+                {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
               </Button>
             </div>
           </div>
@@ -107,14 +114,7 @@ export function LoginForm({ onLogin, onSwitchToRegister }: LoginFormProps) {
             className="w-full"
             disabled={isLoading}
           >
-            {isLoading ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Signing in...
-              </>
-            ) : (
-              "Sign In"
-            )}
+            {isLoading ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" />Signing in...</> : "Sign In"}
           </Button>
         </form>
         <div className="mt-6 text-center">

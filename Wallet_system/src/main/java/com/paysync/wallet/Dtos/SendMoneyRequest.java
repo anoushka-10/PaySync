@@ -12,6 +12,6 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class SendMoneyRequest {
-    private Long toUserId;
+    private String receiverUsername;
     private BigDecimal amount;
 }

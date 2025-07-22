@@ -55,7 +55,7 @@ public class WalletService {
     @Transactional
     public void sendMoney(Long fromUserId, SendMoneyRequest request, String idempotencyKey) {
         idempotencyService.checkwhatOrSaveKey(idempotencyKey, fromUserId, "sendMoney");
-
+        
         Wallet sender = walletRepository.findByUserId(fromUserId)
                 .orElseThrow(() -> new NoSuchElementException("Sender wallet not found"));
 

@@ -1,3 +1,5 @@
+// src/components/auth/RegisterForm.tsx
+
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -5,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Loader2, Eye, EyeOff } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { API_BASE_URL } from "@/lib/api";
+import { apiClient } from "@/lib/api"; // Ensure apiClient is imported
 
 interface RegisterFormProps {
   onRegister: () => void;
@@ -25,56 +27,46 @@ export function RegisterForm({ onRegister, onSwitchToLogin }: RegisterFormProps)
     e.preventDefault();
     
     if (!username.trim() || !email.trim() || !password.trim() || !confirmPassword.trim()) {
-      toast({
-        title: "Error",
-        description: "Please fill in all fields",
-        variant: "destructive",
-      });
+      toast({ title: "Error", description: "Please fill in all fields", variant: "destructive" });
       return;
     }
-
     if (password !== confirmPassword) {
-      toast({
-        title: "Error",
-        description: "Passwords do not match",
-        variant: "destructive",
-      });
+      toast({ title: "Error", description: "Passwords do not match", variant: "destructive" });
       return;
     }
-
     if (password.length < 6) {
-      toast({
-        title: "Error",
-        description: "Password must be at least 6 characters long",
-        variant: "destructive",
-      });
+      toast({ title: "Error", description: "Password must be at least 6 characters long", variant: "destructive" });
       return;
     }
 
     setIsLoading(true);
     try {
-      const response = await fetch(`${API_BASE_URL}/auth/register`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ username, email, password }),
+      // Call the /auth/register endpoint with the correct payload
+      const response = await apiClient.post('/auth/register', {
+        username,
+        email,
+        password,
       });
 
       if (response.ok) {
         onRegister();
         toast({
-          title: "Success",
-          description: "Account created successfully! Please sign in.",
+          title: "Success!",
+          description: "Account created successfully. Please sign in.",
           variant: "default",
         });
       } else {
-        throw new Error('Registration failed');
+        const errorBody = await response.json();
+        toast({
+          title: "Registration Failed",
+          description: errorBody.message || "An error occurred. Please try again.",
+          variant: "destructive",
+        });
       }
     } catch (error) {
       toast({
         title: "Error",
-        description: "Registration failed. Username or email may already exist.",
+        description: "Could not connect to the server.",
         variant: "destructive",
       });
     } finally {
@@ -92,92 +84,33 @@ export function RegisterForm({ onRegister, onSwitchToLogin }: RegisterFormProps)
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="username">Username</Label>
-            <Input
-              id="username"
-              type="text"
-              placeholder="Choose a username"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              disabled={isLoading}
-              className="bg-muted/50"
-            />
+            <Input id="username" type="text" placeholder="Choose a username" value={username} onChange={(e) => setUsername(e.target.value)} disabled={isLoading} className="bg-muted/50" />
           </div>
           <div className="space-y-2">
             <Label htmlFor="email">Email</Label>
-            <Input
-              id="email"
-              type="email"
-              placeholder="Enter your email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              disabled={isLoading}
-              className="bg-muted/50"
-            />
+            <Input id="email" type="email" placeholder="Enter your email" value={email} onChange={(e) => setEmail(e.target.value)} disabled={isLoading} className="bg-muted/50" />
           </div>
           <div className="space-y-2">
             <Label htmlFor="password">Password</Label>
             <div className="relative">
-              <Input
-                id="password"
-                type={showPassword ? "text" : "password"}
-                placeholder="Create a password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                disabled={isLoading}
-                className="bg-muted/50 pr-10"
-              />
-              <Button
-                type="button"
-                variant="ghost"
-                size="sm"
-                className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-                onClick={() => setShowPassword(!showPassword)}
-              >
-                {showPassword ? (
-                  <EyeOff className="h-4 w-4" />
-                ) : (
-                  <Eye className="h-4 w-4" />
-                )}
+              <Input id="password" type={showPassword ? "text" : "password"} placeholder="Create a password" value={password} onChange={(e) => setPassword(e.target.value)} disabled={isLoading} className="bg-muted/50 pr-10" />
+              <Button type="button" variant="ghost" size="sm" className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent" onClick={() => setShowPassword(!showPassword)}>
+                {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
               </Button>
             </div>
           </div>
           <div className="space-y-2">
             <Label htmlFor="confirmPassword">Confirm Password</Label>
-            <Input
-              id="confirmPassword"
-              type="password"
-              placeholder="Confirm your password"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              disabled={isLoading}
-              className="bg-muted/50"
-            />
+            <Input id="confirmPassword" type="password" placeholder="Confirm your password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} disabled={isLoading} className="bg-muted/50" />
           </div>
-          <Button
-            type="submit"
-            variant="gradient"
-            size="lg"
-            className="w-full"
-            disabled={isLoading}
-          >
-            {isLoading ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Creating account...
-              </>
-            ) : (
-              "Create Account"
-            )}
+          <Button type="submit" variant="gradient" size="lg" className="w-full" disabled={isLoading}>
+            {isLoading ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" />Creating account...</> : "Create Account"}
           </Button>
         </form>
         <div className="mt-6 text-center">
           <p className="text-sm text-muted-foreground">
             Already have an account?{" "}
-            <Button
-              variant="link"
-              className="p-0 h-auto font-normal"
-              onClick={onSwitchToLogin}
-            >
+            <Button variant="link" className="p-0 h-auto font-normal" onClick={onSwitchToLogin}>
               Sign in
             </Button>
           </p>
