@@ -2,9 +2,10 @@ name: Build & Deploy Auth Service
 
 on:
   push:
-    paths:
-      - 'auth-service/**'
+    paths:     
+      - 'Authentication-service/**'
       - '.github/workflows/auth-service-deploy.yml'
+
 
 jobs:
   build-and-deploy:
@@ -33,8 +34,8 @@ jobs:
       - name: 📦 Build and Push Docker Image
         uses: docker/build-push-action@v5
         with:
-          context: ./auth-service
-          file: ./auth-service/Dockerfile
+          context: ./Authentication-service
+          file: ./Authentication-service/Dockerfile
           push: true
           tags: ${{ secrets.DOCKER_USERNAME }}/auth-service:latest
 
@@ -46,18 +47,18 @@ jobs:
           key: ${{ secrets.VPS_PRIVATE_KEY }}
           script: |
             echo "🔄 Pulling latest Docker image..."
-            docker pull ${{ secrets.DOCKER_USERNAME }}/auth-service:latest
+            docker pull ${{ secrets.DOCKER_USERNAME }}/authentication-service:latest
 
             echo "🛑 Stopping and removing old container if exists..."
-            docker stop auth-service || true
-            docker rm auth-service || true
-
+            docker stop authentication-service || true
+            docker rm authentication-service || true
+            
             echo "🚀 Running updated container..."
-            docker run -d --name auth-service \
+            docker run -d --name authentication-service \
               -e DB_URL=${{ secrets.DB_URL }} \
               -e DB_USERNAME=${{ secrets.DB_USERNAME }} \
               -e DB_PASSWORD=${{ secrets.DB_PASSWORD }} \
               -e JWT_SECRET=${{ secrets.JWT_SECRET }} \
               -e EUREKA_URL=${{ secrets.EUREKA_URL }} \
               -p 8081:8081 \
-              ${{ secrets.DOCKER_USERNAME }}/auth-service:latest
+            ${{ secrets.DOCKER_USERNAME }}/authentication-service:latest
