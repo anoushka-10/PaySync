@@ -1,10 +1,10 @@
 # Ignore all service-specific application.properties/yml
-!Authentication-service/src/main/resources/application.properties
 **/application.properties
 **/application.yml
 **/application-*.properties
 **/application-*.yml
 !**/application-sample.yml  # allow sample config
+!Authentication-service/src/main/resources/application.properties
 
 # Maven
 target/
