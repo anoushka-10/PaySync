@@ -2,10 +2,9 @@ name: Build & Deploy Auth Service
 
 on:
   push:
-    paths:     
+    paths:
       - 'Authentication-service/**'
       - '.github/workflows/auth-service-deploy.yml'
-
 
 jobs:
   build-and-deploy:
@@ -22,6 +21,10 @@ jobs:
       - name: 📥 Checkout Code
         uses: actions/checkout@v3
 
+      - name: 🧪 Build JAR with Maven
+        run: mvn clean package -DskipTests
+        working-directory: ./Authentication-service
+
       - name: 🐳 Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
 
@@ -37,7 +40,7 @@ jobs:
           context: ./Authentication-service
           file: ./Authentication-service/Dockerfile
           push: true
-          tags: ${{ secrets.DOCKER_USERNAME }}/auth-service:latest
+          tags: ${{ secrets.DOCKER_USERNAME }}/authentication-service:latest
 
       - name: 🚀 SSH and Deploy to VPS
         uses: appleboy/ssh-action@master
@@ -52,7 +55,7 @@ jobs:
             echo "🛑 Stopping and removing old container if exists..."
             docker stop authentication-service || true
             docker rm authentication-service || true
-            
+
             echo "🚀 Running updated container..."
             docker run -d --name authentication-service \
               -e DB_URL=${{ secrets.DB_URL }} \
@@ -61,4 +64,4 @@ jobs:
               -e JWT_SECRET=${{ secrets.JWT_SECRET }} \
               -e EUREKA_URL=${{ secrets.EUREKA_URL }} \
               -p 8081:8081 \
-            ${{ secrets.DOCKER_USERNAME }}/authentication-service:latest
+              ${{ secrets.DOCKER_USERNAME }}/authentication-service:latest
