@@ -1,5 +1,0 @@
-package com.insight.auth_service.client;
-
-public class WalletClient {
-
-}

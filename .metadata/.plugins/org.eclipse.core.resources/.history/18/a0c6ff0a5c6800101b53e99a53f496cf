@@ -1,0 +1,40 @@
+# Identify the microservice
+spring.application.name=wallet-service
+
+# Set unique port
+server.port=8083
+jwt.secret=DIaXB951HW30e7Qu8tSRnFH3hOPWkxYY/EzaNfmlM4Pk9BKBx7EQNYVFb8A36+xid0PnM0lloqAx6MI474tI/w==
+
+# Eureka Configuration
+eureka.client.register-with-eureka=true
+eureka.client.fetch-registry=true
+eureka.client.service-url.defaultZone=http://localhost:8761/eureka
+
+# Kafka Configuration
+spring.kafka.bootstrap-servers=168.231.102.107:9092
+
+# PostgreSQL Configuration
+spring.datasource.url=jdbc:postgresql://168.231.102.107:5433/paysync
+spring.datasource.username=anoushka
+spring.datasource.password=PaySync2025
+
+# JPA + Hibernate
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect
+# Database transaction logging
+logging.level.org.springframework.transaction=DEBUG
+logging.level.org.springframework.orm.jpa=DEBUG
+logging.level.org.springframework.jdbc.datasource.DataSourceTransactionManager=DEBUG
+logging.level.org.hibernate.engine.transaction.internal.TransactionImpl=DEBUG
+
+# SQL logging to see what's actually happening
+spring.jpa.show-sql=true
+spring.jpa.properties.hibernate.format_sql=true
+logging.level.org.hibernate.SQL=DEBUG
+logging.level.org.hibernate.type.descriptor.sql.BasicBinder=TRACE
+
+# Connection pool logging
+logging.level.com.zaxxer.hikari=DEBUG
+# Logging
+logging.level.org.springframework=INFO
+logging.level.com.paysync.wallet=DEBUG
