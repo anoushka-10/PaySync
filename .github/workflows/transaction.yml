@@ -1,0 +1,56 @@
+name: 💸 Transaction CI/CD
+
+on:
+  push:
+    paths:
+      - 'Transaction-service/**'
+    branches: [ main ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Java
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+
+      - name: Build with Maven
+        run: |
+          cd Transaction-service
+          mvn clean package -DskipTests
+
+      - name: Docker Login
+        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+
+      - name: Build Docker image
+        run: |
+          cd Transaction-service
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/transaction-service:latest .
+
+      - name: Push Docker image
+        run: docker push ${{ secrets.DOCKER_USERNAME }}/transaction-service:latest
+
+      - name: SSH and Deploy
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_PRIVATE_KEY }}
+          script: |
+            docker pull ${{ secrets.DOCKER_USERNAME }}/transaction-service:latest
+            docker stop transaction || true
+            docker rm transaction || true
+            docker run -d --name transaction -p 8082:8082 \
+              -e JWT_SECRET=${{ secrets.JWT_SECRET }} \
+              -e EUREKA_URL=${{ secrets.EUREKA_URL }} \
+              -e DB_URL=${{ secrets.DB_URL }} \
+              -e DB_USERNAME=${{ secrets.DB_USERNAME }} \
+              -e DB_PASSWORD=${{ secrets.DB_PASSWORD }} \
+              -e KAFKA_URL=${{ secrets.KAFKA_URL }} \
+              -e ES_URL=${{ secrets.ES_URL }} \
+              ${{ secrets.DOCKER_USERNAME }}/transaction-service:latest
