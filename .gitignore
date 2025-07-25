@@ -5,7 +5,7 @@
 **/application-*.yml
 !**/application-sample.yml  # allow sample config
 !Authentication-service/src/main/resources/application.properties
-
+!Wallet_system/src/main/resources/application.properties
 # Maven
 target/
 **/target/
