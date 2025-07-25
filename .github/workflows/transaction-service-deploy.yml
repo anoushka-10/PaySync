@@ -1,0 +1,64 @@
+name: Build & Deploy Transaction Service
+
+on:
+  push:
+    paths:
+      - 'Transaction-service/**'
+      - '.github/workflows/transaction-service-deploy.yml'
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    env:
+      DB_URL: ${{ secrets.DB_URL }}
+      DB_USERNAME: ${{ secrets.DB_USERNAME }}
+      DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+      JWT_SECRET: ${{ secrets.JWT_SECRET }}
+      KAFKA_URL: ${{ secrets.KAFKA_URL }}
+      ES_URL: ${{ secrets.ES_URL }}
+      EUREKA_URL: ${{ secrets.EUREKA_URL }}
+
+    steps:
+      - name: 📥 Checkout Code
+        uses: actions/checkout@v3
+
+      - name: 🐳 Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: 🔐 Log in to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: 📦 Build and Push Docker Image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./Transaction-service
+          file: ./Transaction-service/Dockerfile
+          push: true
+          tags: ${{ secrets.DOCKER_USERNAME }}/transaction-service:latest
+
+      - name: 🚀 SSH and Deploy to VPS
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_PRIVATE_KEY }}
+          script: |
+            bash <<EOF
+            docker pull ${{ secrets.DOCKER_USERNAME }}/transaction-service:latest
+            docker stop transaction-service || true
+            docker rm transaction-service || true
+            docker run -d --name transaction-service \
+              -e DB_URL="${DB_URL}" \
+              -e DB_USERNAME="${DB_USERNAME}" \
+              -e DB_PASSWORD="${DB_PASSWORD}" \
+              -e JWT_SECRET="${JWT_SECRET}" \
+              -e KAFKA_URL="${KAFKA_URL}" \
+              -e ES_URL="${ES_URL}" \
+              -e EUREKA_URL="${EUREKA_URL}" \
+              -p 8082:8082 \
+              ${{ secrets.DOCKER_USERNAME }}/transaction-service:latest
+            EOF
