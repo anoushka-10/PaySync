@@ -49,6 +49,8 @@ jobs:
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_PRIVATE_KEY }}
           script: |
+
+            bash <<EOF
             echo "🔄 Pulling latest Docker image..."
             docker pull ${{ secrets.DOCKER_USERNAME }}/authentication-service:latest
 
@@ -65,3 +67,4 @@ jobs:
               -e EUREKA_URL=${{ secrets.EUREKA_URL }} \
               -p 8081:8081 \
               ${{ secrets.DOCKER_USERNAME }}/authentication-service:latest
+            EOF
