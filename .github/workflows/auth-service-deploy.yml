@@ -50,7 +50,7 @@ jobs:
           key: ${{ secrets.VPS_PRIVATE_KEY }}
           script: |
 
-            bash <<EOF
+            bash <<'EOF'
             echo "🔄 Pulling latest Docker image..."
             docker pull ${{ secrets.DOCKER_USERNAME }}/authentication-service:latest
 
