@@ -23,6 +23,10 @@ jobs:
       - name: 📥 Checkout Code
         uses: actions/checkout@v3
 
+      - name: 🧪 Build JAR with Maven
+        run: mvn clean package -DskipTests
+        working-directory: ./Transaction-service
+
       - name: 🐳 Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
 
