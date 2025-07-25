@@ -5132,3 +5132,74 @@ Binding(CTRL+SHIFT+T,
 		,,true),null),
 	org.eclipse.ui.defaultAcceleratorConfiguration,
 	org.eclipse.ui.contexts.window,,,system)
+!SESSION 2025-07-25 13:35:46.384 -----------------------------------------------
+eclipse.buildId=4.35.0.202503181406
+java.version=21.0.6
+java.vendor=Eclipse Adoptium
+BootLoader constants: OS=linux, ARCH=x86_64, WS=gtk, NL=en_IN
+Framework arguments:  -product org.springframework.boot.ide.branding.sts4
+Command-line arguments:  -os linux -ws gtk -arch x86_64 -product org.springframework.boot.ide.branding.sts4
+
+!ENTRY ch.qos.logback.classic 1 0 2025-07-25 13:35:48.719
+!MESSAGE Activated before the state location was initialized. Retry after the state location is initialized.
+
+!ENTRY org.eclipse.lemminx.uber-jar 4 0 2025-07-25 13:35:48.962
+!MESSAGE bundle org.eclipse.lemminx.uber-jar:0.29.0 (325) Component descriptor entry 'OSGI-INF/*.xml' not found
+
+!ENTRY ch.qos.logback.classic 1 0 2025-07-25 13:35:51.737
+!MESSAGE Logback config file: /home/anoushka/Desktop/insightsync/.metadata/.plugins/org.eclipse.m2e.logback/logback.2.7.0.20241001-1350.xml
+
+!ENTRY org.eclipse.ui 2 0 2025-07-25 13:35:52.276
+!MESSAGE Warnings while parsing the commands from the 'org.eclipse.ui.commands' and 'org.eclipse.ui.actionDefinitions' extension points.
+!SUBENTRY 1 org.eclipse.ui 2 0 2025-07-25 13:35:52.276
+!MESSAGE Commands should really have a category: plug-in='org.springframework.tooling.boot.ls', id='spring.initializr.addStarters', categoryId='org.eclipse.lsp4e.commandCategory'
+
+!ENTRY org.eclipse.ui 2 0 2025-07-25 13:35:52.567
+!MESSAGE Warnings while parsing the commands from the 'org.eclipse.ui.commands' and 'org.eclipse.ui.actionDefinitions' extension points.
+!SUBENTRY 1 org.eclipse.ui 2 0 2025-07-25 13:35:52.567
+!MESSAGE Commands should really have a category: plug-in='org.springframework.tooling.boot.ls', id='spring.initializr.addStarters', categoryId='org.eclipse.lsp4e.commandCategory'
+
+!ENTRY org.springframework.tooling.ls.eclipse.commons 1 0 2025-07-25 13:35:56.045
+!MESSAGE Command list starting LS: org.springframework.tooling.boot.ls
+START:
+/home/anoushka/sts-4.29.1.RELEASE/plugins/org.eclipse.justj.openjdk.hotspot.jre.full.linux.x86_64_21.0.6.v20250130-0529/jre/bin/java
+-Dsts.lsp.client=eclipse
+-Xmx1024m
+-XX:TieredStopAtLevel=1
+-Dspring.config.location=classpath:/application.properties
+-Xlog:jni+resolve=off
+-XX:ErrorFile=/home/anoushka/Desktop/insightsync/.metadata/.plugins/org.springframework.tooling.boot.ls/fatal-error-spring-boot_1753430756044
+-Dlanguageserver.hover-timeout=225
+-jar
+/home/anoushka/sts-4.29.1.RELEASE/plugins/org.springframework.tooling.boot.ls_1.61.1.202503181316/servers/spring-boot-language-server/spring-boot-language-server-1.61.1-SNAPSHOT-exec.jar
+END
+
+!ENTRY org.springframework.tooling.boot.ls 1 0 2025-07-25 13:35:56.046
+!MESSAGE DelegatingStreamConnectionProvider - Starting Boot LS
+
+!ENTRY org.springframework.tooling.ls.eclipse.commons 1 0 2025-07-25 13:35:56.049
+!MESSAGE Started org.springframework.tooling.boot.ls LS process 15974
+
+!ENTRY org.springframework.tooling.boot.ls 1 0 2025-07-25 13:35:56.695
+!MESSAGE Boot project ADDED: APIGateway
+
+!ENTRY org.springframework.tooling.boot.ls 1 0 2025-07-25 13:35:56.696
+!MESSAGE Starting Boot LS...
+
+!ENTRY org.springframework.tooling.boot.ls 1 0 2025-07-25 13:35:56.697
+!MESSAGE Started Boot LS process
+
+!ENTRY org.springframework.tooling.boot.ls 1 0 2025-07-25 13:35:56.706
+!MESSAGE Boot project ADDED: Authentication-service
+
+!ENTRY org.springframework.tooling.boot.ls 1 0 2025-07-25 13:35:56.715
+!MESSAGE Boot project ADDED: BakeryBeyondEggs
+
+!ENTRY org.springframework.tooling.boot.ls 1 0 2025-07-25 13:35:56.723
+!MESSAGE Boot project ADDED: EurekaServerMicroservice
+
+!ENTRY org.springframework.tooling.boot.ls 1 0 2025-07-25 13:35:56.733
+!MESSAGE Boot project ADDED: Transaction-service
+
+!ENTRY org.springframework.tooling.boot.ls 1 0 2025-07-25 13:35:56.746
+!MESSAGE Boot project ADDED: Wallet_system
