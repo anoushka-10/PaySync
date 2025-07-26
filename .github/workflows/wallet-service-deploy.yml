@@ -51,7 +51,6 @@ jobs:
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_PRIVATE_KEY }}
           script: |
-            bash <<EOF
             echo "🔄 Pulling latest Docker image..."
             docker pull ${{ secrets.DOCKER_USERNAME }}/wallet-service:latest
 
@@ -69,5 +68,5 @@ jobs:
               -e KAFKA_URL="${KAFKA_URL}" \
               -p 8083:8083 \
               ${{ secrets.DOCKER_USERNAME }}/wallet-service:latest
-            EOF
+            
 
