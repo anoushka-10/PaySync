@@ -5,6 +5,7 @@ on:
     paths:
       - 'Authentication-service/**'
       - '.github/workflows/auth-service-deploy.yml'
+  workflow_dispatch:
 
 jobs:
   build-and-deploy:
