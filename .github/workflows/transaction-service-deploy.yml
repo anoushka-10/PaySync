@@ -56,13 +56,13 @@ jobs:
             docker stop transaction-service || true
             docker rm transaction-service || true
             docker run -d --name transaction-service \
-              -e DB_URL="${DB_URL}" \
-              -e DB_USERNAME="${DB_USERNAME}" \
-              -e DB_PASSWORD="${DB_PASSWORD}" \
-              -e JWT_SECRET="${JWT_SECRET}" \
-              -e KAFKA_URL="${KAFKA_URL}" \
-              -e ES_URL="${ES_URL}" \
-              -e EUREKA_URL="${EUREKA_URL}" \
+              -e DB_URL="${{ secrets.DB_URL }}" \
+              -e DB_USERNAME="${{ secrets.DB_USERNAME }}" \
+              -e DB_PASSWORD="${{ secrets.DB_PASSWORD }}" \
+              -e JWT_SECRET="${{ secrets.JWT_SECRET }}" \
+              -e KAFKA_URL="${{ secrets.KAFKA_URL}}" \
+              -e ES_URL="${{ secrets.ES_URL}}" \
+              -e EUREKA_URL="${{ secrets.EUREKA_URL}}" \
               -p 8082:8082 \
               ${{ secrets.DOCKER_USERNAME }}/transaction-service:latest
             
