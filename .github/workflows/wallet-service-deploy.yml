@@ -5,7 +5,8 @@ on:
     paths:
       - 'Wallet_system/**'
       - '.github/workflows/wallet-service-deploy.yml'
-
+  workflow_dispatch:
+   
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
