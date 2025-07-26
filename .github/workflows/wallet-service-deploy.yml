@@ -60,12 +60,12 @@ jobs:
 
             echo "🚀 Running updated container..."
             docker run -d --name wallet-service \
-              -e DB_URL="${DB_URL}" \
-              -e DB_USERNAME="${DB_USERNAME}" \
-              -e DB_PASSWORD="${DB_PASSWORD}" \
-              -e JWT_SECRET="${JWT_SECRET}" \
-              -e EUREKA_URL="${EUREKA_URL}" \
-              -e KAFKA_URL="${KAFKA_URL}" \
+              -e DB_URL="${{ secrets.DB_URL }}" \
+              -e DB_USERNAME="${{ secrets.DB_USERNAME }}" \
+              -e DB_PASSWORD="${{ secrets.DB_PASSWORD }}" \
+              -e JWT_SECRET="${{ secrets.JWT_SECRET }}" \
+              -e EUREKA_URL="${{ secrets.EUREKA_URL }}" \
+              -e KAFKA_URL="${{ secrets.KAFKA_URL}}" \
               -p 8083:8083 \
               ${{ secrets.DOCKER_USERNAME }}/wallet-service:latest
             
