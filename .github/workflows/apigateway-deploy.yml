@@ -50,7 +50,7 @@ jobs:
             docker stop apigateway || true
             docker rm apigateway || true
             docker run -d --name apigateway \
-              -e EUREKA_URL="${EUREKA_URL}" \
+              -e EUREKA_URL="${{ secrets.EUREKA_URL}}" \
               -p 8080:8080 \
               ${{ secrets.DOCKER_USERNAME }}/apigateway:latest
             
