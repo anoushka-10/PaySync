@@ -52,7 +52,6 @@ jobs:
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_PRIVATE_KEY }}
           script: |
-            bash <<EOF
             docker pull ${{ secrets.DOCKER_USERNAME }}/transaction-service:latest
             docker stop transaction-service || true
             docker rm transaction-service || true
@@ -66,4 +65,4 @@ jobs:
               -e EUREKA_URL="${EUREKA_URL}" \
               -p 8082:8082 \
               ${{ secrets.DOCKER_USERNAME }}/transaction-service:latest
-            EOF
+            
