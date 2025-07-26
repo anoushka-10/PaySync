@@ -46,7 +46,6 @@ jobs:
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_PRIVATE_KEY }}
           script: |
-            bash <<EOF
             docker pull ${{ secrets.DOCKER_USERNAME }}/apigateway:latest
             docker stop apigateway || true
             docker rm apigateway || true
@@ -54,4 +53,4 @@ jobs:
               -e EUREKA_URL="${EUREKA_URL}" \
               -p 8080:8080 \
               ${{ secrets.DOCKER_USERNAME }}/apigateway:latest
-            EOF
+            
