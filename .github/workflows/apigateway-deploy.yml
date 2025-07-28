@@ -50,7 +50,10 @@ jobs:
             docker stop apigateway || true
             docker rm apigateway || true
             docker run -d --name apigateway \
+              --memory="512m" \
+              --cpus="0.5" \
               -e EUREKA_URL="${{ secrets.EUREKA_URL}}" \
               -p 8080:8080 \
+              --restart unless-stopped \
               ${{ secrets.DOCKER_USERNAME }}/apigateway:latest
             
