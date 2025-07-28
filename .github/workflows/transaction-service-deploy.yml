@@ -56,6 +56,8 @@ jobs:
             docker stop transaction-service || true
             docker rm transaction-service || true
             docker run -d --name transaction-service \
+              --memory="512m" \
+              --cpus="0.5" \
               -e DB_URL="${{ secrets.DB_URL }}" \
               -e DB_USERNAME="${{ secrets.DB_USERNAME }}" \
               -e DB_PASSWORD="${{ secrets.DB_PASSWORD }}" \
@@ -64,5 +66,6 @@ jobs:
               -e ES_URL="${{ secrets.ES_URL}}" \
               -e EUREKA_URL="${{ secrets.EUREKA_URL}}" \
               -p 8082:8082 \
+              --restart unless-stopped \
               ${{ secrets.DOCKER_USERNAME }}/transaction-service:latest
             
