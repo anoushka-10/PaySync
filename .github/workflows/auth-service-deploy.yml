@@ -59,10 +59,13 @@ jobs:
 
             echo "🚀 Running updated container..."
             docker run -d --name authentication-service \
+              --memory="512m" \
+              --cpus="0.5" \
               -e DB_URL="${{ secrets.DB_URL }}" \
               -e DB_USERNAME="${{ secrets.DB_USERNAME }}" \
               -e DB_PASSWORD="${{ secrets.DB_PASSWORD }}" \
               -e JWT_SECRET="${{ secrets.JWT_SECRET }}" \
               -e EUREKA_URL="${{ secrets.EUREKA_URL }}" \
               -p 8081:8081 \
+              --restart unless-stopped \
               ${{ secrets.DOCKER_USERNAME }}/authentication-service:latest
