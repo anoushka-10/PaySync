@@ -9,7 +9,7 @@
 # Maven
 target/
 **/target/
-
+/.metadata/
 # Gradle
 build/
 **/build/
