@@ -63,7 +63,6 @@ jobs:
               -e DB_PASSWORD="${{ secrets.DB_PASSWORD }}" \
               -e JWT_SECRET="${{ secrets.JWT_SECRET }}" \
               -e KAFKA_URL="${{ secrets.KAFKA_URL}}" \
-              -e ES_URL="${{ secrets.ES_URL}}" \
               -e EUREKA_URL="${{ secrets.EUREKA_URL}}" \
               -p 8082:8082 \
               --restart unless-stopped \
