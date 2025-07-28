@@ -8,9 +8,7 @@ import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.paysync.transaction.entity.Transaction;
-import com.paysync.transaction.entity.TransactionDocument;
 import com.paysync.transaction.entity.TransactionEvent;
-import com.paysync.transaction.repository.TransactionElasticRepository;
 import com.paysync.transaction.repository.TransactionRepository;
 
 import lombok.RequiredArgsConstructor;
