@@ -16,6 +16,7 @@ import com.paysync.transaction.repository.TransactionRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+
 @Slf4j
 @Component
 @RequiredArgsConstructor
@@ -23,8 +24,7 @@ public class TransactionEventListener {
 
     private final TransactionRepository transactionRepository;
     private final ObjectMapper objectMapper;
-    private final TransactionElasticRepository elasticRepository;
-
+    // private final TransactionElasticRepository elasticRepository; // This line has been removed
 
     @KafkaListener(topics = "wallet-transactions", groupId = "transaction_group")
     public void consumeTransactionEvent(String message) {
@@ -39,20 +39,11 @@ public class TransactionEventListener {
                     .timestamp(Instant.parse(event.getTimestamp()))
                     .build();
             transactionRepository.save(transaction);
-            log.info("Transaction event saved: {}", event);
-            // Save to Elasticsearch
-            TransactionDocument doc = TransactionDocument.builder()
-                    .transactionId(event.getTransactionId())
-                    .fromUserId(event.getFromUserId())
-                    .toUserId(event.getToUserId())
-                    .amount(event.getAmount())
-                    .transactionType(event.getEventType().equals("WALLET_MONEY_SENT") ? "DEBIT" : "CREDIT")
-                    .timestamp(Instant.parse(event.getTimestamp()))
-                    .build();
-            elasticRepository.save(doc);
+            
+            // The entire block for saving to Elasticsearch has been removed.
+            
+            log.info("Transaction event saved to Postgres"); // Updated log message
 
-            log.info("Transaction event saved to Postgres and Elasticsearch");
-      
         } catch (Exception e) {
             log.error("Failed to process transaction event", e);
         }
