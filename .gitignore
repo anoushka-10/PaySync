@@ -32,3 +32,4 @@ Thumbs.db
 # Docker
 *.env
 .env
+.metadata/
