@@ -41,7 +41,7 @@ export function RecentTransactions({ token, onViewAll }: RecentTransactionsProps
   const fetchTransactions = async () => {
     setIsLoading(true);
     try {
-      const response = await fetch(`http://localhost:8080/transaction?page=0&size=5`, {
+      const response = await fetch(`${API_BASE_URL}/transaction?page=0&size=5`, {
         headers: {
           'Authorization': `Bearer ${token}`,
         },
