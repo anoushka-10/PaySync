@@ -20,7 +20,9 @@ public class CorsConfig {
         // This now allows requests from BOTH your live site and your local development environment.
         corsConfig.setAllowedOrigins(List.of(
             "https://pay-sync-kappa.vercel.app",
-            "http://localhost:3000"
+            "http://localhost:3000",
+            "https://paysync.tech",              // Your new main domain
+            "https://www.paysync.tech" 
         ));
 
         corsConfig.setMaxAge(3600L);
