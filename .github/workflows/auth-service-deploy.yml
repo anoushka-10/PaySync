@@ -61,6 +61,8 @@ jobs:
             docker run -d --name authentication-service \
               --memory="512m" \
               --cpus="0.5" \
+              -e EUREKA_INSTANCE_PREFER_IP_ADDRESS=true \
+              -e EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/ \
               -e DB_URL="${{ secrets.DB_URL }}" \
               -e DB_USERNAME="${{ secrets.DB_USERNAME }}" \
               -e DB_PASSWORD="${{ secrets.DB_PASSWORD }}" \
