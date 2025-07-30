@@ -58,13 +58,14 @@ jobs:
             docker run -d --name transaction-service \
               --memory="512m" \
               --cpus="0.5" \
+              -p 8082:8082 \
+              --restart unless-stopped \
+              -e EUREKA_INSTANCE_PREFER_IP_ADDRESS=true \
+              -e EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/ \
+              -e SPRING_KAFKA_BOOTSTRAP_SERVERS=paysync-kafka:9092 \
               -e DB_URL="${{ secrets.DB_URL }}" \
               -e DB_USERNAME="${{ secrets.DB_USERNAME }}" \
               -e DB_PASSWORD="${{ secrets.DB_PASSWORD }}" \
               -e JWT_SECRET="${{ secrets.JWT_SECRET }}" \
-              -e KAFKA_URL="${{ secrets.KAFKA_URL}}" \
-              -e EUREKA_URL="${{ secrets.EUREKA_URL}}" \
-              -p 8082:8082 \
-              --restart unless-stopped \
               ${{ secrets.DOCKER_USERNAME }}/transaction-service:latest
             
