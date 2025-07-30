@@ -52,8 +52,10 @@ jobs:
             docker run -d --name apigateway \
               --memory="512m" \
               --cpus="0.5" \
-              -e EUREKA_URL="${{ secrets.EUREKA_URL}}" \
-              -p 8080:8080 \
-              --restart unless-stopped \
-              ${{ secrets.DOCKER_USERNAME }}/apigateway:latest
+            -p 8080:8080 \
+            --restart unless-stopped \
+            -e EUREKA_INSTANCE_PREFER_IP_ADDRESS=true \
+            -e EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/ \
+            ${{ secrets.DOCKER_USERNAME }}/apigateway:latest
+
             
