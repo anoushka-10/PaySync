@@ -59,6 +59,7 @@ jobs:
 
             echo "🚀 Running updated container..."
             docker run -d --name authentication-service \
+              --network paysync-net \
               --memory="512m" \
               --cpus="0.5" \
               -e EUREKA_INSTANCE_PREFER_IP_ADDRESS=true \
